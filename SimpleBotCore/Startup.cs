@@ -28,6 +28,7 @@ namespace SimpleBotCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
+            services.AddSingleton<IQuestionRepository>(new QuestionRepository());
             services.AddSingleton<IBotDialogHub, BotDialogHub>();
             services.AddSingleton<BotDialog, SimpleBot>();
 
