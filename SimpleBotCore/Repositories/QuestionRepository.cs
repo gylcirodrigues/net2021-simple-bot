@@ -1,29 +1,39 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using SimpleBotCore.Config;
+using SimpleBotCore.Models;
+using System.Threading.Tasks;
 
 namespace SimpleBotCore.Repositories
 {
     public class QuestionRepository : IQuestionRepository
     {
-        private readonly MongoClient mongoClient;
-        private readonly IMongoDatabase db;
-        private readonly IMongoCollection<BsonDocument> coll;
+        private readonly IMongoClient _client;
+        private readonly IMongoCollection<Question> _questionCollection;
+        private readonly IMongoDatabase _database;
 
-        public QuestionRepository()
+        private readonly MongoDBConnection _config;
+        private readonly MongoClientSettings _settings;
+
+        public QuestionRepository(IOptions<MongoDBConnection> options)
         {
-            this.mongoClient = new MongoClient();
-            this.db = this.mongoClient.GetDatabase("bot");
-            this.coll = this.db.GetCollection<BsonDocument>("questions");
+            _config = options.Value;
+
+            _settings = MongoClientSettings.FromConnectionString(_config.GetConnectionDefault());
+            _client = new MongoClient(_settings);
+
+            _database = _client.GetDatabase(_config.Database);
+            _questionCollection = _database.GetCollection<Question>("questions");
         }
 
-
-        public void AddQuestion(string question)
+        public async Task CreateAsync(string text)
         {
-            var value = new BsonDocument()
+            var question = new Question
             {
-                { "Question", question }
+                Content = text,
             };
-            this.coll.InsertOne(value);
+
+            await _questionCollection.InsertOneAsync(question);
         }
     }
 }

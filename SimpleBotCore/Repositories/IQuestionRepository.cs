@@ -1,7 +1,9 @@
-﻿namespace SimpleBotCore.Repositories
+﻿using System.Threading.Tasks;
+
+namespace SimpleBotCore.Repositories
 {
     public interface IQuestionRepository
     {
-        void AddQuestion(string question);
+        Task CreateAsync(string question);
     }
 }
