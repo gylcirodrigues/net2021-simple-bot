@@ -44,12 +44,12 @@ namespace SimpleBotCore
         {
             bool sqlEnabled;
 
-            bool.TryParse(configuration.GetSection("ConnectionStrings:SQLConnection:Enabled").Value, out sqlEnabled);
+            bool.TryParse(configuration.GetSection("ConnectionStrings:SQLSeverConnection:Enabled").Value, out sqlEnabled);
 
             services.AddOptions<SQLConfigConnection>()
                     .Configure<IConfiguration>((settings, configuration) =>
                     {
-                        configuration.GetSection("ConnectionStrings:SQLConnection").Bind(settings);
+                        configuration.GetSection("ConnectionStrings:SQLSeverConnection").Bind(settings);
                     });
 
             if (sqlEnabled)
