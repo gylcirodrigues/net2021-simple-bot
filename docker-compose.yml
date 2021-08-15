@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+    db:
+      container_name: bot-sql
+      image: "mcr.microsoft.com/mssql/server:2017-latest"
+      environment:
+          SA_PASSWORD: "Your_password123"
+          ACCEPT_EULA: "Y"
+      ports:
+          - '1433:1433'
+    mongo: 
+        container_name: bot-mongo
+        image: mongo:4
+        ports:
+          - '27017:27017'

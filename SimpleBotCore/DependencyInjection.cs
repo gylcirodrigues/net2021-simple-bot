@@ -10,17 +10,15 @@ namespace SimpleBotCore
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMongoDBConfiguration(configuration);
-
             services.AddSQLServerConfiguration(configuration);
+            services.AddSingleton<IMongoHelper, MongoHelper>();
 
             return services;
         }
 
         private static IServiceCollection AddMongoDBConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            bool mongoEnabled;
-
-            bool.TryParse(configuration.GetSection("ConnectionStrings:MongoDBConnection:Enabled").Value, out mongoEnabled);
+            bool.TryParse(configuration.GetSection("ConnectionStrings:MongoDBConnection:Enabled").Value, out bool mongoEnabled);
 
             services.AddOptions<MongoDBConnection>()
                     .Configure<IConfiguration>((settings, configuration) =>
