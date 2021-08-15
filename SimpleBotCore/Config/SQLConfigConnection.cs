@@ -8,10 +8,12 @@
         public string Password { get; set; }
         public string UserId { get; set; }
         public bool MultipleActiveResultSets { get; set; } = true;
+        public bool Trusted_Connection { get; set; } = true;
 
         public string GetConnectionDefault()
         {
-            return $"\"Server={Server};Database={Database};MultipleActiveResultSets={MultipleActiveResultSets}\"";
+            var str =  $"\"Server={Server};Database={Database};MultipleActiveResultSets={MultipleActiveResultSets};Trusted_Connection={Trusted_Connection}\"";
+            return str;
         }
 
         public string GetConnectionAtlas()
