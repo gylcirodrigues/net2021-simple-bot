@@ -18,10 +18,5 @@
         {
             return $"mongodb://{Host}:{Port}/{Database}";
         }
-
-        public string GetConnectionAtlas()
-        {
-            return $"mongodb://{Username}:{Password}@{Host}/{Database}?ssl={UseSSL}&replicaSet={ReplicaSet}&authSource={AuthSource}&retryWrites={RetryWrites}&w={Write}";
-        }
     }
 }

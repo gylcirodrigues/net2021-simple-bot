@@ -8,32 +8,22 @@ namespace SimpleBotCore.Repositories
 {
     public class QuestionRepository : IQuestionRepository
     {
-        private readonly IMongoClient _client;
-        private readonly IMongoCollection<Question> _questionCollection;
-        private readonly IMongoDatabase _database;
+        private readonly IMongoHelper mongo;
 
-        private readonly MongoDBConnection _config;
-        private readonly MongoClientSettings _settings;
-
-        public QuestionRepository(IOptions<MongoDBConnection> options)
+        public QuestionRepository(IMongoHelper mongo)
         {
-            _config = options.Value;
-
-            _settings = MongoClientSettings.FromConnectionString(_config.GetConnectionDefault());
-            _client = new MongoClient(_settings);
-
-            _database = _client.GetDatabase(_config.Database);
-            _questionCollection = _database.GetCollection<Question>("questions");
+            this.mongo = mongo;
         }
 
-        public async Task CreateAsync(string text)
+        public async Task CreateAsync(string text, string userId)
         {
             var question = new Question
             {
                 Content = text,
+                UserId = userId
             };
 
-            await _questionCollection.InsertOneAsync(question);
+            await this.mongo.GetCollection<Question>("questions").InsertOneAsync(question);
         }
     }
 }

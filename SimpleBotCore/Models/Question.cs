@@ -22,5 +22,9 @@ namespace SimpleBotCore.Models
         [BsonRepresentation(BsonType.DateTime)]
         [BsonElement("update")]
         public DateTime Update { get; set; } = DateTime.Now;
+
+        [BsonRepresentation(BsonType.String)]
+        [BsonElement("userId")]
+        public string UserId { get;  set; }
     }
 }

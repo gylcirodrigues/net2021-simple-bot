@@ -4,6 +4,7 @@ using SimpleBotCore.Logic;
 using System;
 using System.Data.SqlClient;
 using Dapper;
+using System.Linq;
 
 namespace SimpleBotCore.Repositories
 {
@@ -13,7 +14,7 @@ namespace SimpleBotCore.Repositories
 
         public UserProfileSqlRepository(IOptions<SQLConfigConnection> options)
         {
-            _config = options.Value;            
+            _config = options.Value;
         }
 
         public void AtualizaCor(string userId, string cor)
@@ -23,7 +24,7 @@ namespace SimpleBotCore.Repositories
 
             using (SqlConnection connection = new SqlConnection(_config.GetConnectionDefault()))
             {
-                connection.Execute("UPDATE User Cor = @cor WHERE Id = @id",
+                connection.Execute("UPDATE [User] set Cor = @cor WHERE Id = @id",
                     new
                     {
                         id = userId,
@@ -39,7 +40,7 @@ namespace SimpleBotCore.Repositories
 
             using (SqlConnection connection = new SqlConnection(_config.GetConnectionDefault()))
             {
-                connection.Execute("UPDATE User Idade = @idade WHERE Id = @id",
+                connection.Execute("UPDATE [User] set Idade = @idade WHERE Id = @id",
                     new
                     {
                         id = userId,
@@ -55,7 +56,7 @@ namespace SimpleBotCore.Repositories
 
             using (SqlConnection connection = new SqlConnection(_config.GetConnectionDefault()))
             {
-                connection.Execute("UPDATE User Name = @name WHERE Id = @id",
+                connection.Execute("UPDATE [User] set Nome = @name WHERE Id = @id",
                     new
                     {
                         id = userId,
@@ -66,40 +67,39 @@ namespace SimpleBotCore.Repositories
 
         public SimpleUser Create(SimpleUser user)
         {
-            using (SqlConnection connection = new SqlConnection(_config.GetConnectionDefault()))
-            {
-                if (Exists(user.Id))
-                    throw new InvalidOperationException("Usuário ja existente");
+            using SqlConnection connection = new SqlConnection(_config.GetConnectionDefault());
 
-                connection.Execute("INSERT User (Id, Nome, Idade, Cor) VALUES (@id, @nome, @idade, @cor)",
-                    new { 
-                        id = user.Id, 
-                        nome = user.Nome,
-                        idade = user.Idade,
-                        cor = user.Cor
-                    });
-            }
+            if (Exists(user.Id))
+                throw new InvalidOperationException("Usuário ja existente");
+
+            connection.Execute("INSERT [User] (Id, Nome, Idade, Cor) VALUES (@id, @nome, @idade, @cor)",
+                new
+                {
+                    id = user.Id,
+                    nome = user.Nome,
+                    idade = user.Idade,
+                    cor = user.Cor
+                });
+
             return user;
         }
 
         public SimpleUser TryLoadUser(string userId)
         {
-            using (SqlConnection connection = new SqlConnection(_config.GetConnectionDefault()))
-            {
-                SimpleUser user = (SimpleUser)connection.Query("SELECT Id, Nome, Idade, Cor from User WHERE Id = @id",
-                    new
-                    {
-                        id = userId
-                    });
+            using SqlConnection connection = new SqlConnection(_config.GetConnectionDefault());
 
-                return user;
-            }
-            return null;
+            var user = connection.Query<SimpleUser>("SELECT Id, Nome, Idade, Cor from [User] WHERE Id = @id",
+                new
+                {
+                    id =  userId
+                });
+
+            return user.FirstOrDefault();
         }
 
         private bool Exists(string userId)
         {
-            return (!(TryLoadUser(userId) == null));
+            return !(TryLoadUser(userId) == null);
         }
     }
 }

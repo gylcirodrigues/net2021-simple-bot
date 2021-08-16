@@ -4,6 +4,6 @@ namespace SimpleBotCore.Repositories
 {
     public interface IQuestionRepository
     {
-        Task CreateAsync(string question);
+        Task CreateAsync(string question, string userId);
     }
 }

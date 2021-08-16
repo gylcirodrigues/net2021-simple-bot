@@ -71,8 +71,8 @@ namespace SimpleBotCore.Logic
                 if (texto.EndsWith("?"))
                 {
                     await WriteAsync("Processando...");
-                    await _questionRepository.CreateAsync(texto);
-                    await Task.Delay(5000);
+                    await _questionRepository.CreateAsync(texto, user.Id);
+
                     await WriteAsync("Resposta não encontrada");
                 }
                 else
